@@ -2,7 +2,7 @@ FROM python:3.8
 
 
 
-RUN pip install requirements.txt
+RUN pip install -r requirements.txt
 
 COPY . /app
 
@@ -12,4 +12,4 @@ ENV port 8000
 
 ENTRYPOINT  ["python"]
 
-CMD ["manage.py runserver"]
+CMD ["manage.py", "runserver"]

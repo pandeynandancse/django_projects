@@ -2,7 +2,7 @@ from django.shortcuts import render
 import requests
 # Create your views here.
 from django.http import HttpResponse
-
+from pusher_push_notifications import PushNotifications
 from newsapi import NewsApiClient
 import pprint
 import requests
@@ -89,36 +89,22 @@ def uploader(request):
 
 
 
+def push_notify(name,progress,work):
+
+    pn_client = PushNotifications(instance_id='d01b2036-e93f-4125-9842-599b86adf848',secret_key='A3A80F519C3087269057B0660CD7DF4ED50E6F63EA413983BEA26B31297AE7D3')
+    response = pn_client.publish(interests=['hello'],publish_body={'apns': {'aps': {'alert': 'Report Created'}},'fcm': {'notification': {'title': str(name), 'body': 'Progress: '+str(progress) +" work: " +str(work) }}})
+    print(response['publishId'])
+
+
 
 def post_create(request):
-#Just added source code for post_create function/view
+    work = request.POST.get('work')
+    progress =request.POST.get('progress')
 
-	import time
-	from datetime import datetime, timezone
-	import pytz
+    url = request.POST.get('url')
+    data = {"work":work,'progress':progress,'url':url}
+    push_notify(url,progress,work)
+    database.child('users').child('reports').set(data)
+    name = database.child('users').child('reports').child('url').get().val()
+    return render(request,'myapp/welcome.html',{'i':name})
 
-	# tz= pytz.timezone('Asia/Kolkata')
-	# time_now= datetime.now(timezone.utc).astimezone(tz)
-	# millis = int(time.mktime(time_now.timetuple()))
-	# print("mili"+str(millis))
-
-	work = request.POST.get('work')
-	progress =request.POST.get('progress')
-	url = request.POST.get('url')
-
-	# idtoken= request.session['uid']
-	# a = authe.get_account_info(idtoken)
-	# a = a['users']
-	# a = a[0]
-	# a = a['localId']
-	# print("info"+str(a))
-	data = {
-	"work":work,
-	'progress':progress,
-	'url':url
-	}
-	database.child('users').child('reports').set(data)
-	name = database.child('users').child('reports').child('url').get().val()
-    
-	return render(request,'myapp/welcome.html',{'i':name})
-    

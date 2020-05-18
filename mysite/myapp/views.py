@@ -9,13 +9,18 @@ import requests
 import pyrebase
 
 
-#get service account as json from firebase
+#authentication part has been done with flask project with nandanpandeysmvdu@gmail.com
+#this django project is being done with artificial intelligence work@gmail.com
+# note : image size of nearly 150kb can be uploaded on storage of firebase successfully
+
+
+#get service account as json from firebase so that u can enter data in database
 firebaseConfig = {
     "apiKey": "AIzaSyBch3rJHdrjwxzJzl-644FLtjLteaEKVqU",
     "authDomain": "django-project-90f04.firebaseapp.com",
     "databaseURL": "https://django-project-90f04.firebaseio.com",
     "projectId": "django-project-90f04",
-    "storageBucket": "django-project-90f04.appspot.com",
+    "storageBucket": "gs://django-project-90f04.appspot.com",
     "messagingSenderId": "578131955207",
     "appId": "1:578131955207:web:c0695cf66586c8303fe4a2",
     "measurementId": "G-25D5PVMCW1",
@@ -75,3 +80,45 @@ def index(request):
     #name = database.child('users').child(a).child('details').child('name').get().val()
 
     return render(request, 'myapp/index.html')
+
+
+
+
+def uploader(request):
+    return render(request,'myapp/upload.html')    
+
+
+
+
+def post_create(request):
+#Just added source code for post_create function/view
+
+	import time
+	from datetime import datetime, timezone
+	import pytz
+
+	# tz= pytz.timezone('Asia/Kolkata')
+	# time_now= datetime.now(timezone.utc).astimezone(tz)
+	# millis = int(time.mktime(time_now.timetuple()))
+	# print("mili"+str(millis))
+
+	work = request.POST.get('work')
+	progress =request.POST.get('progress')
+	url = request.POST.get('url')
+
+	# idtoken= request.session['uid']
+	# a = authe.get_account_info(idtoken)
+	# a = a['users']
+	# a = a[0]
+	# a = a['localId']
+	# print("info"+str(a))
+	data = {
+	"work":work,
+	'progress':progress,
+	'url':url
+	}
+	database.child('users').child('reports').set(data)
+	name = database.child('users').child('reports').child('url').get().val()
+    
+	return render(request,'myapp/welcome.html',{'i':name})
+    

@@ -1,0 +1,107 @@
+<html lang="en">
+	<head>
+	    <meta charset="UTF-8">
+	    <title>Sign</title>
+	    <style>
+	        div{
+                position : absolute;
+                right : 10px;
+                top : 5px
+	        }
+	    </style>
+	</head>
+
+	<body>
+	    <div>
+	        
+	    </div>
+	    <H2>Create Daily Progress Report</H2>
+	    <form action="post_created" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            Work Assigned :
+
+	            <input type="text" name="work" required><br><br>
+
+	        Progress:
+
+	            <textarea rows="5" cols="40" name="progress" required></textarea>
+
+	        <br><br>
+
+	        Document Uplaod:
+
+                <input type="file" name="files[]" id="files">
+                <input type="hidden" name="url" id="url">
+                <button type="button" onclick="uploadimage()">Upload</button><br><br>
+
+	        <input type="submit" value="Submit">
+    	</form>
+
+	</body>
+
+
+	<script src="https://www.gstatic.com/firebasejs/3.7.4/firebase.js"></script>
+	<script>
+	    var config = {
+                apiKey: "AIzaSyBch3rJHdrjwxzJzl-644FLtjLteaEKVqU",
+                authDomain: "django-project-90f04.firebaseapp.com",
+                databaseURL: "https://django-project-90f04.firebaseio.com",
+                projectId: "django-project-90f04",
+                storageBucket: "gs://django-project-90f04.appspot.com",//set your bucketid
+                messagingSenderId: "578131955207",
+                
+                //serviceAccount: "/root/Downloads/django-project-90f04-firebase-adminsdk-q72wc-375d8b509c.json"
+	    };
+
+
+
+
+
+
+
+
+
+        //perform this operation in rules section of storage in firebase so that anybody can insert data in firebase storage
+        // service firebase.storage {
+        //          match /b/{bucket}/o {
+        //         match /{allPaths=**} {
+        //         allow read, write;
+        //             }
+        //         }
+        // }
+
+
+
+
+
+
+
+
+	    firebase.initializeApp(config);
+	  // Get a reference to the storage service, which is used to create references in your storage bucket
+	    function uploadimage(){
+
+                var storage = firebase.storage();
+                var file = document.getElementById("files").files[0];
+                var storageRef = storage.ref();
+                var thisref = storageRef.child(file.name).put(file);
+                thisref.on('state_changed',function(snapshot){
+                                                 console.log("file uplaoded succesfully");
+                                                 console.log("ok")
+                                            },
+
+                                            function(error) {
+                                                console.log("llll")
+                                            },
+
+                                            function() {
+                                            // Upload completed successfully, now we can get the download URL
+                                            var downloadURL = thisref.snapshot.downloadURL;
+                                            console.log("got url");
+                                            document.getElementById("url").value = downloadURL;
+                                            alert("file uploaded successfully");
+                                            }
+                            );
+        }
+	</script>
+</html>
